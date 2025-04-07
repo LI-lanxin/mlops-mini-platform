@@ -1,1 +1,11 @@
- 
+name: Placeholder CI for MLOps Project
+
+on: [push, pull_request]
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+    - name: CI placeholder – no tests yet
+      run: echo "No tests implemented yet. CI passed."
+
