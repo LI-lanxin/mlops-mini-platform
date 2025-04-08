@@ -1,0 +1,33 @@
+[project]
+name = "mlops_tool"
+version = "0.1.0"
+description = "A lightweight CLI tool for packaging, evaluating, and comparing ML models and experiments."
+readme = "README.md"
+authors = [
+  { name="Alexandre LISSARDY", email="alexandre.lissardy@student-cs.fr" },
+  { name="Lanxin LI", email="lanxin.li@student-cs.fr" },
+  { name="Meng XIA", email="meng.xia@student-cs.fr" },
+  { name="Jiejie XU", email="jiejie.xu@student-cs.fr" },
+  { name="Bowei Zhao", email="bowei.zhao@student-cs.fr" }
+]
+license = { text = "MIT" }
+requires-python = ">=3.12"
+
+dependencies = [
+  "click>=8.0",
+  "numpy>=1.24.0",
+  "pandas>=2.0.0",
+  "scikit-learn>=1.3.0",
+  "streamlit>=1.0",
+  "matplotlib>=3.10.0"
+]
+
+
+[project.scripts]
+mlops = "cli:cli"  
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
