@@ -1,3 +1,13 @@
+# Ignore generated experiment folders like exp_1, exp_2, etc.
+experiments/exp_*/
+
+# Ignore any .json or .pkl outputs (metrics, config, model)
+experiments/*.json
+experiments/*.pkl
+
+# Optional: keep folder but ignore content
+!experiments/.gitkeep
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
