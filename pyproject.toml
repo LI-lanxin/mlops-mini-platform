@@ -1,7 +1,7 @@
 [project]
 name = "mlops_tool"
 version = "0.1.0"
-description = "A lightweight CLI tool for packaging, evaluating, and comparing ML models and experiments."
+description = "A lightweight tool for packaging, evaluating, and comparing ML models and experiments."
 readme = "README.md"
 authors = [
   { name="Alexandre LISSARDY", email="alexandre.lissardy@student-cs.fr" },
@@ -10,8 +10,8 @@ authors = [
   { name="Jiejie XU", email="jiejie.xu@student-cs.fr" },
   { name="Bowei Zhao", email="bowei.zhao@student-cs.fr" }
 ]
-license = { text = "MIT" }
-requires-python = ">=3.12"
+license = "MIT"
+requires-python = ">=3.10"
 
 dependencies = [
   "click>=8.0",
@@ -24,10 +24,33 @@ dependencies = [
 
 
 [project.scripts]
-mlops = "cli:cli"  
+mlops = "cli.cli:cli" 
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0.0",
+  "ruff>=0.1.0",
+  "mypy>=1.0.0"
+]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["cli", "scripts"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+select = ["E", "F", "B", "I", "N", "UP", "PL", "RUF"]
+exclude = []
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
 
