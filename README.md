@@ -52,21 +52,56 @@ Your own experiment results will be saved automatically when using the CLI or fu
 | 💻 CLI Interface      | Use the `mlops` command to interact via terminal                            |
 
 ---
+## 📦 Requirements
+
+Before installing the project, make sure you have the following:
+
+- Python 3.10+
+- Git
+
+Optional:
+
+- VSCode or another IDE
+
+---
 
 ## 🛠️ Installation 
 
-To use the tool locally in development mode:
+### 🔁 Clone or Fork?
+
+If you only want to **use** this tool, you can simply clone this repository:
+
+```bash
+git clone https://github.com/LI-lanxin/mlops-mini-platform.git
+```
+
+If you want to **develop, modify, or contribute**, please **fork** this repository first on GitHub,  
+then clone **your fork**:
+
+```bash
+git clone https://github.com/your-username/mlops-mini-platform.git
+```
+
+---
+
+### 🔧 Set up the environment
 
 ```cmd
-REM Step 1: Clone the repository
-git clone https://github.com/LI-lanxin/mlops-mini-platform.git
+REM Step 1: Enter the project folder
 cd mlops-mini-platform
 
-REM Step 2: Install in editable mode
+REM Step 2: (Recommended) Create a virtual environment
+python -m venv .venv
+.venv\Scripts\activate
+
+REM Step 3: Install the tool in editable mode
 pip install -e .
 ```
 
-> ✅ This makes the `mlops` command available globally, and keeps your changes live.
+✅ This makes the `mlops` command available globally, and keeps your changes live.
+
+---
+
 
 ---
 
@@ -97,6 +132,7 @@ Hello from the MLOps CLI!
 ```cmd
 mlops package-results --model-path path/to/model.pkl --test-csv path/to/test.csv --label-col label --dataset-name my_dataset
 ```
+加一个例子
 
 Creates a new folder under `experiments/exp_n/` containing:
 - `model.pkl`
@@ -108,6 +144,7 @@ Creates a new folder under `experiments/exp_n/` containing:
 ```cmd
 mlops compare-metrics --metrics-dir experiments --configs-dir experiments --save-path comparison.png
 ```
+加一个例子
 
 Saves a bar plot comparing accuracy, F1, etc. and prints recommendations.
 
