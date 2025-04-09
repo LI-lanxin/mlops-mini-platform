@@ -34,7 +34,13 @@ mlops-mini-platform/
 ```
 
 ---
+🧪 The `experiments/` folder is used to store your experiment outputs (model, config, metrics).
+This folder is not tracked in version control (see `.gitignore`) and will be empty after cloning the project.
 
+Your own experiment results will be saved automatically when using the CLI or function interface.
+
+
+---
 ## ⚙️ Main Features
 
 | Feature               | Description                                                                 |
