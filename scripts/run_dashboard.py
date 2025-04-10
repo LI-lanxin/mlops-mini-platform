@@ -16,7 +16,7 @@ from scripts.compare_metrics import give_recommendation # Because we need to cal
 import glob # for path finding
 import os # Import the operating system module for path operation
 
-# ✅ 函数 0：供 Notebook 使用的封装函数
+# Wrapper function for running inside a notebook
 def run_dashboard_ui():
     """
     Run the Streamlit dashboard from a notebook or external script.
@@ -26,7 +26,7 @@ def run_dashboard_ui():
     """
     import subprocess
     script_path = os.path.abspath(__file__)
-    subprocess.Popen(["streamlit", "run", script_path])
+    subprocess.Popen(["streamlit", "run", script_path])  # Launch Streamlit in a non-blocking way
 
 # Build a function to load all metrics content in the experiment folder and save it as a dict
 def load_all_metrics(exp_dir="experiments"):
