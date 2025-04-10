@@ -27,18 +27,18 @@ def load_all_metrics(exp_dir="experiments"):
 
 # Build a function to create plots
 def plot_metrics(metrics_dict):
-  """
-  Plot all the metrics
-  arguments: metrics_dict : dictionary
-  return: None
-  """
-  # first transpose the previously constructed dictionary format metrics
-  # to make the X-axis represent different experiments and the Y-axis represent values
+    """
+    Plot all the metrics
+    arguments: metrics_dict : dictionary
+    return: None
+    """
+    # first transpose the previously constructed dictionary format metrics
+    # to make the X-axis represent different experiments and the Y-axis represent values
     metrics_df = pd.DataFrame(metrics_dict).T
-    ## First display as a df table
+    # First display as a df table
     st.write("Experiment Metrics Data Table:")
     st.dataframe(metrics_df)
-  #then use a bar chart to show comparison between different experiments
+    #then use a bar chart to show comparison between different experiments
     st.write("🔎 Metrics Comparison Chart:")
     fig, ax = plt.subplots()
     df.plot(kind='bar', ax=ax)
