@@ -110,7 +110,7 @@ def give_recommendation(metrics_df, configs_df=None, priority_metric='None'):
     return recommendations
 
 
-def run_compare_metrics(metrics_dir="experiments", configs_dir="experiments", save_path=None):
+def run_compare_metrics(metrics_dir="experiments", configs_dir="experiments", save_path=None, priority_metric='accuracy'):
     """
     Run the metrics comparison and generate recommendations.
     
@@ -121,7 +121,9 @@ def run_compare_metrics(metrics_dir="experiments", configs_dir="experiments", sa
     configs_dir : str
         Directory containing experiment configuration JSON files
     save_path : str or None
-        Path to save the comparison plot. If None, plot is displayed but not saved
+        Path to save the comparison plot, if not specified, the program will show the plot but not save it (default: None)
+    priority_metric : str
+        Metric to use when giving recommendation (default: 'accuracy')
         
     Returns:
     --------
@@ -148,8 +150,8 @@ def run_compare_metrics(metrics_dir="experiments", configs_dir="experiments", sa
     # Plot metrics
     fig = plot_metrics(metrics_df, save_path)
     
-    # Generate recommendations
-    recommendations = give_recommendation(metrics_df, configs_df)
+    # Generate recommendations with priority metric
+    recommendations = give_recommendation(metrics_df, configs_df, priority_metric)
     print("\nRecommendations:")
     for exp, rec in recommendations.items():
         print(f"- {exp}: {rec}")
@@ -164,10 +166,11 @@ def main():
                         help="Directory containing experiment configurations JSON files.")
     parser.add_argument("--save_path", type=str, default=None,
                         help="Path to save the plot.")
+    parser.add_argument("--priority", type=str, default="accuracy",
+                        help="Priority metric used for recommendations, can be defined directly or selected in streamlit interface")
     args = parser.parse_args()
     
-    run_compare_metrics(args.metrics_dir, args.configs_dir, args.save_path)
-
+    run_compare_metrics(args.metrics_dir, args.configs_dir, args.save_path, args.priority)
 
 if __name__ == "__main__":
     main()
