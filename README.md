@@ -10,7 +10,7 @@ A lightweight tool designed to help machine learning practitioners **package**, 
 
 
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 MLOPS-MINI-PLATFORM/
@@ -20,6 +20,8 @@ MLOPS-MINI-PLATFORM/
 ├── cli/
 │   ├── __init__.py
 │   └── cli.py                      # Main CLI commands for package, compare, dashboard
+├── data_for_example_notebook/
+│   └── heart.csv                   # Dataset used in example notebook
 ├── experiments/
 │   └── .gitkeep                    # Placeholder for experiment results (exp1, exp2, ...)
 ├── scripts/
@@ -31,12 +33,13 @@ MLOPS-MINI-PLATFORM/
 │   ├── test_compare_metrics.py     # Unit test for compare_metrics
 │   └── test_package_results.py     # Unit test for package_results
 ├── .gitignore
-├── HeartDiseasePrediction.ipynb    # Example notebook
+├── Example_HeartDiseasePrediction.ipynb   # Example notebook
 ├── pyproject.toml                  # Project metadata and CLI entrypoint
 ├── README.md
 └── requirements.txt               # Python dependencies
 
 ```
+
 
 The `experiments/` folder is used to store your experiment outputs (model, config, metrics).
 This folder is not tracked in version control (see `.gitignore`) and will be empty after cloning the project.
