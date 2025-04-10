@@ -40,12 +40,40 @@ def plot_metrics(metrics_df, save_path=None):
         print(f"Chart saved to {save_path}")
     return fig
 
-def give_recommendation(metrics_df, configs_df=None):
+def give_recommendation(metrics_df, configs_df=None, priority_metric='accuracy'):
     """Provide recommendations of best model based on the metrics and configurations."""
     recommendations = {}
+    
+    # First see if there is a priority metric available
+    best_model = None
+    best_score = -1
+    
+    # First pass to find the best model according to priority metric
     for exp in metrics_df.index:
-        # Added error handling for missing metrics
-        if 'accuracy' in metrics_df.columns and not pd.isna(metrics_df.loc[exp, 'accuracy']):
+        if priority_metric in metrics_df.columns and not pd.isna(metrics_df.loc[exp, priority_metric]):
+            score = metrics_df.loc[exp, priority_metric]
+            if score > best_score:
+                best_score = score
+                best_model = exp
+    
+    # Second pass to generate recommendations for each model
+    for exp in metrics_df.index:
+        # Check if priority metric exists for this experiment
+        if priority_metric in metrics_df.columns and not pd.isna(metrics_df.loc[exp, priority_metric]):
+            val = metrics_df.loc[exp, priority_metric]
+            is_best = ""
+            if exp == best_model:
+                is_best = " (BEST MODEL)"
+            
+            if val > 0.9:
+                recommendations[exp] = f"Good performance ({priority_metric}: {val:.4f}){is_best}"
+            elif val > 0.7:
+                recommendations[exp] = f"Average performance ({priority_metric}: {val:.4f}){is_best}"
+            else:
+                recommendations[exp] = f"Poor performance ({priority_metric}: {val:.4f}){is_best}"
+                
+        # Fallback to accuracy if priority metric not available
+        elif 'accuracy' in metrics_df.columns and not pd.isna(metrics_df.loc[exp, 'accuracy']):
             acc = metrics_df.loc[exp, 'accuracy']
             if acc > 0.9:
                 recommendations[exp] = f"Good performance (accuracy: {acc:.4f})"
@@ -53,7 +81,8 @@ def give_recommendation(metrics_df, configs_df=None):
                 recommendations[exp] = f"Average performance (accuracy: {acc:.4f})"
             else:
                 recommendations[exp] = f"Poor performance (accuracy: {acc:.4f})"
-        # Added fallback for other metrics
+                
+        # Fallback to F1-score if accuracy not available
         elif 'f1_score' in metrics_df.columns and not pd.isna(metrics_df.loc[exp, 'f1_score']):
             f1 = metrics_df.loc[exp, 'f1_score']
             if f1 > 0.9:
@@ -62,6 +91,7 @@ def give_recommendation(metrics_df, configs_df=None):
                 recommendations[exp] = f"Average performance (F1-score: {f1:.4f})"
             else:
                 recommendations[exp] = f"Poor performance (F1-score: {f1:.4f})"
+                
         else:
             # Use any available metric
             for metric in metrics_df.columns:
@@ -70,7 +100,13 @@ def give_recommendation(metrics_df, configs_df=None):
                     recommendations[exp] = f"Performance based on {metric}: {val:.4f}"
                     break
             else:
-                recommendations[exp] = "No metrics available for evaluation"
+                recommendations[exp] = "Error 404 No metrics available for evaluation"
+    
+    # Add summary recommendation about best model
+    if best_model:
+        best_value = metrics_df.loc[best_model, priority_metric]
+        summary = f"RECOMMENDATION: Model '{best_model}' is the best performer with {priority_metric} = {best_value:.4f}"
+        recommendations['summary'] = summary
     
     return recommendations
 
