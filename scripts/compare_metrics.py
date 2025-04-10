@@ -40,7 +40,7 @@ def plot_metrics(metrics_df, save_path=None):
         print(f"Chart saved to {save_path}")
     return fig
 
-def give_recommendation(metrics_df, configs_df=None, priority_metric='accuracy'):
+def give_recommendation(metrics_df, configs_df=None, priority_metric='None'):
     """Provide recommendations of best model based on the metrics and configurations."""
     recommendations = {}
     
@@ -72,7 +72,7 @@ def give_recommendation(metrics_df, configs_df=None, priority_metric='accuracy')
             else:
                 recommendations[exp] = f"Poor performance ({priority_metric}: {val:.4f}){is_best}"
                 
-        # Fallback to accuracy if priority metric not available
+        # if no priority metric, first use accuracy, then F1-score
         elif 'accuracy' in metrics_df.columns and not pd.isna(metrics_df.loc[exp, 'accuracy']):
             acc = metrics_df.loc[exp, 'accuracy']
             if acc > 0.9:
@@ -82,7 +82,6 @@ def give_recommendation(metrics_df, configs_df=None, priority_metric='accuracy')
             else:
                 recommendations[exp] = f"Poor performance (accuracy: {acc:.4f})"
                 
-        # Fallback to F1-score if accuracy not available
         elif 'f1_score' in metrics_df.columns and not pd.isna(metrics_df.loc[exp, 'f1_score']):
             f1 = metrics_df.loc[exp, 'f1_score']
             if f1 > 0.9:
@@ -110,41 +109,65 @@ def give_recommendation(metrics_df, configs_df=None, priority_metric='accuracy')
     
     return recommendations
 
-def main():
-    parser = argparse.ArgumentParser(description="Compare experiment metrics and configurations.")
-    parser.add_argument("--metrics_dir", type=str, default="experiments", 
-                        help="Directory containing experiment metrics JSON files.")
-    parser.add_argument("--configs_dir", type=str, default="experiments", 
-                        help="Directory containing experiment configurations JSON files.")
-    parser.add_argument("--save_path", type=str, default=None, 
-                        help="Path to save the plot.")
-    args = parser.parse_args()
 
+def run_compare_metrics(metrics_dir="experiments", configs_dir="experiments", save_path=None):
+    """
+    Run the metrics comparison and generate recommendations.
+    
+    Parameters:
+    -----------
+    metrics_dir : str
+        Directory containing experiment metrics JSON files
+    configs_dir : str
+        Directory containing experiment configuration JSON files
+    save_path : str or None
+        Path to save the comparison plot. If None, plot is displayed but not saved
+        
+    Returns:
+    --------
+    tuple
+        (metrics_df, recommendations, plot_fig)
+    """
     # Load data
-    metrics = load_exp_metrics(args.metrics_dir)
-    configs = load_exp_configs(args.configs_dir)
-
+    metrics = load_exp_metrics(metrics_dir)
+    configs = load_exp_configs(configs_dir)
+    
     if not metrics:
-        print("Erorr 404 - No experiment metrics found")
-        return
-
+        print("Error 404 - No experiment metrics found")
+        return None, None, None
+    
     # Convert to DataFrames
     metrics_df = conversion_to_df(metrics)
     configs_df = conversion_to_df(configs) if configs else None
-
+    
     # Display metrics
     print("\nMetrics Comparison:")
     print(metrics_df)
     print("\n")
-
+    
     # Plot metrics
-    plot_metrics(metrics_df, args.save_path)
+    fig = plot_metrics(metrics_df, save_path)
     
     # Generate recommendations
     recommendations = give_recommendation(metrics_df, configs_df)
     print("\nRecommendations:")
     for exp, rec in recommendations.items():
         print(f"- {exp}: {rec}")
+    
+    return metrics_df, recommendations, fig
+
+def main():
+    parser = argparse.ArgumentParser(description="Compare experiment metrics and configurations.")
+    parser.add_argument("--metrics_dir", type=str, default="experiments",
+                        help="Directory containing experiment metrics JSON files.")
+    parser.add_argument("--configs_dir", type=str, default="experiments",
+                        help="Directory containing experiment configurations JSON files.")
+    parser.add_argument("--save_path", type=str, default=None,
+                        help="Path to save the plot.")
+    args = parser.parse_args()
+    
+    run_compare_metrics(args.metrics_dir, args.configs_dir, args.save_path)
+
 
 if __name__ == "__main__":
     main()
