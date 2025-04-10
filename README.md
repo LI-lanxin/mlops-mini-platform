@@ -195,7 +195,7 @@ Also, as mentioned in the *Set up the environment* section, running `pip install
 If you want to train your own models in the same environment, please install the necessary additional packages manually.
 
 
-##  Authors
+##  Onwers
 
 - Alexandre LISSARDY
 - Lanxin LI 
