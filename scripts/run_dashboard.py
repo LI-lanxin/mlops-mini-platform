@@ -12,9 +12,21 @@ import pandas as pd  # For organizing experimental metrics data, need to display
 import matplotlib.pyplot as plt  # For creating bar charts
 from pathlib import Path  # For cross-platform file path handling
 import json  # Because the metric files we need to read are in JSON format
-from compare_metrics import give_recommendation  # Because we need to call the recommendation model function from compare_metrics
+from scripts.compare_metrics import give_recommendation # Because we need to call the recommendation model function from compare_metrics
 import glob # for path finding
 import os # Import the operating system module for path operation
+
+# ✅ 函数 0：供 Notebook 使用的封装函数
+def run_dashboard_ui():
+    """
+    Run the Streamlit dashboard from a notebook or external script.
+    Usage:
+        from scripts.run_dashboard import run_dashboard_ui
+        run_dashboard_ui()
+    """
+    import subprocess
+    script_path = os.path.abspath(__file__)
+    subprocess.Popen(["streamlit", "run", script_path])
 
 # Build a function to load all metrics content in the experiment folder and save it as a dict
 def load_all_metrics(exp_dir="experiments"):
@@ -49,27 +61,29 @@ def plot_metrics(metrics_dict):
     plt.xticks(rotation=45) # in case the name is too long
     st.pyplot(fig)
 
-# Streamlit page configuration
-st.set_page_config(page_title="Experiment Comparison Platform", layout="centered")
-st.title("Experiment Comparison Platform")
-st.markdown("The system will automatically compare multiple model experiments, their metrics, and provide recommendations.")
 
-# Load the results of the first function load_metrics into a new variable
-metrics = load_all_metrics()
-# If these loaded metrics are empty
-if len(metrics) == 0:
-    st.warning("No experiments have been found, please upload experiment folders containing metrics.json first.")
-else:
+    
+if __name__ == "__main__":
+    st.set_page_config(page_title="Experiment Comparison Platform", layout="centered")
+    st.title("Experiment Comparison Platform")
+    st.markdown("The system will automatically compare multiple model experiments, their metrics, and provide recommendations.")
+
+    # Load the results of the first function load_metrics into a new variable
+    metrics = load_all_metrics()
+    # If these loaded metrics are empty
+    if len(metrics) == 0:
+        st.warning("No experiments have been found, please upload experiment folders containing metrics.json first.")
+    else:
     # Visualization + Recommendation output
-    plot_metrics(metrics)
+        plot_metrics(metrics)
 
-    st.markdown("## System Recommendation")
-    available_metrics = list(next(iter(metrics.values())).keys())
-    # we just want to give these priority metric options
-    metric_options = [m for m in ["accuracy", "f1_score", "precision", "recall", "loss"] if m in available_metrics]
-    priority_metric = st.selectbox("Select priority metric", metric_options)
+        st.markdown("## System Recommendation")
+        available_metrics = list(next(iter(metrics.values())).keys())
+        # we just want to give these priority metric options
+        metric_options = [m for m in ["accuracy", "f1_score", "precision", "recall", "loss"] if m in available_metrics]
+        priority_metric = st.selectbox("Select priority metric", metric_options)
 
-    # Convert metrics dictionary to DataFrame before calling give_recommendation
-    metrics_df = pd.DataFrame.from_dict(metrics, orient='index')
-    model_suggestion = give_recommendation(metrics_df, priority_metric=priority_metric)  
-    st.success(model_suggestion)
+        # Convert metrics dictionary to DataFrame before calling give_recommendation
+        metrics_df = pd.DataFrame.from_dict(metrics, orient='index')
+        model_suggestion = give_recommendation(metrics_df, priority_metric=priority_metric)  
+        st.success(model_suggestion)
