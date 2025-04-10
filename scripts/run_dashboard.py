@@ -7,8 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/19YECx-f0C0I6_JXI3ZsvCk2rDqSAfEAb
 """
 
-pip install streamlit
-
 import streamlit as st  # For visualization
 import pandas as pd  # For organizing experimental metrics data, need to display in tables
 import matplotlib.pyplot as plt  # For creating bar charts
@@ -22,9 +20,11 @@ import os # Import the operating system module for path operation
 def load_all_metrics(exp_dir="experiments"):
     metrics = {}
     for path in glob.glob(os.path.join(Path(exp_dir), "*/metrics.json")):
-      with open(path) as f:
-        data = json.load(f)
-      metrics[path.parent.name] = data
+        with open(path) as f:
+            data = json.load(f)
+        # Extract experiment name from path
+        exp_name = os.path.basename(os.path.dirname(path))
+        metrics[exp_name] = data
     return metrics
 
 # Build a function to create plots
@@ -43,7 +43,7 @@ def plot_metrics(metrics_dict):
     #then use a bar chart to show comparison between different experiments
     st.write("🔎 Metrics Comparison Chart:")
     fig, ax = plt.subplots()
-    df.plot(kind='bar', ax=ax)
+    metrics_df.plot(kind='bar', ax=ax)
     plt.title("Experiment Metrics Comparison")
     plt.ylabel("Score")
     plt.xticks(rotation=45) # in case the name is too long
@@ -68,5 +68,8 @@ else:
     # we just want to give these priority metric options
     metric_options = [m for m in ["accuracy", "f1_score", "precision", "recall", "loss"] if m in available_metrics]
     priority_metric = st.selectbox("Select priority metric", metric_options)
-    model_suggestion = give_recommendation(metrics, priority_metric)  # Use the recommendation function from compare_metrics
+
+    # Convert metrics dictionary to DataFrame before calling give_recommendation
+    metrics_df = pd.DataFrame.from_dict(metrics, orient='index')
+    model_suggestion = give_recommendation(metrics_df, priority_metric=priority_metric)  
     st.success(model_suggestion)
